@@ -9,21 +9,35 @@
 
 set_motor_speed:
 	@ r0 - enderco de uma Struct
-	push {r7}
-	mov r2, #1
-	ldrb r1, [r0, r2]
+	push {r7, lr}
+	ldrb r1, [r0, #1]
 	ldrb r0, [r0]
 	mov r7, #18
 	svc #0
-	pop {r7}
+	pop {r7, lr}
+	mov pc, lr
 
 
 set_motors_speed:
 	@ r0 - enderco de uma Struct
 	@ r1 - enderco de uma Struct
+	push {r7, lr}
+	ldrb r0, [r0, #1]
+	ldrb r1, [r1, #1]
+	mov r7, #19
+	svc #0
+	pop {r7, lr}
+	mov pc, lr
+
 
 read_sonar:
 	@ r0 - Id
+	push {r7, lr}
+	mov r7, #16
+	svc #0
+	pop {r7, lr}
+	mov pc, lr
+
 
 read_sonars:
 	@ r0 - inicio

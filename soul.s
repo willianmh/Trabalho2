@@ -160,13 +160,13 @@ svc_read_sonar:	@ duvida quanto ao sinal ?
 	@ seleciona o sensor (mux) e trigger = 0
 	mov r1, #0xffffffc1 @ mascara 1100 0001
 	orr r0, r1, r0, lsl #2 @ ver se funciona (?)
-	@ r0 -> sensor na posicão 5:2 e trigger em '1' e resto em '1'
+	@ r0 -> sensor na posicão 5:2 e trigger em '0' e resto em '1'
 
 	ldr r1, =DR         @ r1 <- endereco DR
 	str r0, [r1]
 
+	mov r2, #200
 delay_1:
-	mov r2, #100
 	sub r2,r2, #1
 	cmp r2, #0
 	bne delay_1
@@ -177,8 +177,8 @@ delay_1:
 	orr r0, r0, #2
 	str r0, [r1]
 
+	mov r2, #200
 delay_2:
-	mov r2, #100
 	sub r2,r2, #1
 	cmp r2, #0
 	bne delay_2
@@ -189,13 +189,14 @@ delay_2:
 	and r0, r0, r2
 	str r0, [r1]
 
-	ldr r2, =PSR
+	ldr r2, =DR
 espera_flag:
 	ldr r0, [r2]
 	and r0, r0, #1      @ carrega flag em r0
 	cmp r0, #1
 	bne espera_flag
 
+	ldr r0, [r2]
 	mov r0, r0, lsr #6  @ ajusta a posicao de SONAR_DATA
 	ldr r1, =0x00000fff
 	and r0, r0, r1      @ ignora o resto, deixa apenas [11:0]
