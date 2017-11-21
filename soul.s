@@ -60,13 +60,13 @@ RESET_HANDLER:
 	@ Configura entrada/saida GPIO
 	@ 0x7c003fff ou 0xfffc003e
 	ldr r0, =GDIR
-	mov r1, #0xfffc003e
+	ldr r1, =0xfffc003e
 	str r1, [r0]
 
 	@ zera o vetor de callbacks
-	ldr r0, =CALLBACK_VECTOR
-	mov r1, #0
-	strb r1, [r0]
+	@ldr r0, =CALLBACK_VECTOR
+	@mov r1, #0
+	@strb r1, [r0]
 
 	@ zera o numero de callbacks ativas
 	ldr r0, =ACTIVED_CALLBACKS
@@ -197,7 +197,7 @@ espera_flag:
 	bne espera_flag
 
 	mov r0, r0, lsr #6  @ ajusta a posicao de SONAR_DATA
-	mov r1, #0x00000fff
+	ldr r1, =0x00000fff
 	and r0, r0, r1      @ ignora o resto, deixa apenas [11:0]
 	b SOFTWARE_INT_HANDLER_END
 
@@ -241,11 +241,11 @@ svc_set_motor_speed:
 	@ habilita w1, copia motor1_speed e desabilita trigger
 set_motor_r1:
 	moveq r1, r1, lsl #26
-	moveq r2, #0x01fffffd
+	ldreq r2, =0x01fffffd
 	@ habilita w0, copia motor0_speed e desabilita trigger
 set_motor_r0:
 	movne r1, r1, lsl #19
-	movne r2, #0xfe03fffd
+	ldrne r2, =0xfe03fffd
 
 	orr r1, r1, r2
 	ldr r0, =DR
@@ -254,7 +254,7 @@ set_motor_r0:
 	mov r0, #0
 	b SOFTWARE_INT_HANDLER_END
 
-set_motors_speed:
+svc_set_motors_speed:
 	@ r0 = velocidade motor 0
 	@ r1 = velocidade motor 1
 	cmp r0, #63
@@ -272,7 +272,7 @@ set_motors_speed:
 
 	orr r0, r0, r1					@ junta as informacoes em r0
 	@ w0 e w1, motor0 e motor1 e trigger em '0'
-	mov r2, #0x0003fffd
+	ldr r2, =0x0003fffd
 	orr r0, r0, r2
 
 	ldr r1, =DR
@@ -281,17 +281,17 @@ set_motors_speed:
 	mov r0, #0
 	b SOFTWARE_INT_HANDLER_END
 
-get_time:
+svc_get_time:
 	ldr r0, =CONTADOR
 	ldr r0, [r0]
 	b SOFTWARE_INT_HANDLER_END
 
-set_time:
+svc_set_time:
 	ldr r1, =CONTADOR
 	str r0, [r1]
 	b SOFTWARE_INT_HANDLER_END
 
-set_alarm:
+svc_set_alarm:
 	@ r0 = function
 	@ r1 = system time
 
@@ -341,7 +341,7 @@ SOFTWARE_INT_HANDLER_ERROR:
 @ ****************************************************************************
 IRQ_HANDLER:
 
-	ldr r0, #GPT_SR
+	ldr r0, =GPT_SR
 	mov r1, #0x1
 	str r1, [r0]
 
