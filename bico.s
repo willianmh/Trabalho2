@@ -13,7 +13,7 @@ set_motor_speed:
 	ldrb r1, [r0, #1]
 	ldrb r0, [r0]
 	mov r7, #18
-	svc #0
+	svc 0x0
 	pop {r7, lr}
 	mov pc, lr
 
@@ -25,7 +25,7 @@ set_motors_speed:
 	ldrb r0, [r0, #1]
 	ldrb r1, [r1, #1]
 	mov r7, #19
-	svc #0
+	svc 0x0
 	pop {r7, lr}
 	mov pc, lr
 
@@ -34,7 +34,7 @@ read_sonar:
 	@ r0 - Id
 	push {r7, lr}
 	mov r7, #16
-	svc #0
+	svc 0x0
 	pop {r7, lr}
 	mov pc, lr
 
