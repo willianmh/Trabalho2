@@ -322,8 +322,9 @@ svc_set_alarm:
 	b SOFTWARE_INT_HANDLER_END
 
 svc_supervisor:
+	pop {r1-r6, r8, lr}
 	msr CPSR_c, #0x12
-	b SOFTWARE_INT_HANDLER_END
+	movs pc, lr
 
 svc_read_sonar_error:
 too_many_callbacks:
@@ -349,7 +350,7 @@ SOFTWARE_INT_HANDLER_ERROR:
 
 @ ****************************************************************************
 IRQ_HANDLER:
-	push {r0-r7, lr}
+	push {r0-r8, lr}
 
 	ldr r0, =GPT_SR
 	mov r1, #0x1
@@ -490,7 +491,7 @@ remove_alarm_end:
 	sub r1, r1, #1				@ ajusta
 
 	push {r0-r3}
-
+	msr CPSR_c, #0x10
 	blx r7
 	mov r7, #23
 	svc 0x0
@@ -503,7 +504,7 @@ next_alarm:
 verify_alarm_end:
 
 
-	pop {r0-r7, lr}
+	pop {r0-r8, lr}
 	sub lr, lr, #4
 	movs pc, lr
 
