@@ -24,18 +24,8 @@ void main() {
 	// *****************************************************************
 	
 	// procura parede
-	while (1) {
-		distance = read_sonar(3);
-		distance_aux = read_sonar(4);
-	 	if (distance < 1000 && distance_aux < 1000) {
-	 		break;	
-	 	}
-	}
-	m0.speed = 0;
-	m1.speed = 5;
-	set_motor_speed(&m0);
-	set_motor_speed(&m1);
-	
+
+	while (1);
 	// vira a esquerda
 	while(1) {
 		distance = read_sonar(0);
@@ -117,8 +107,17 @@ void main() {
 	while (1);
 }
 
-void stop_uoli {
-        
+void stop_uoli (){
+    motor_cfg_t m0, m1;
+    m0.id = 0;
+    m1.id = 1;
+
+    m0.speed = 0;
+    m1.speed = 0;
+    set_motor_speed(&m0);
+    set_motor_speed(&m1);
+
+    return;
 };
 
 
