@@ -10,6 +10,7 @@ void main() {
 	unsigned short sonar_1;
 	unsigned short sonar_14;
 	motor_cfg_t m0, m1;
+	void (*function)();
 
 	m0.id = 0;
 	m1.id = 1;
@@ -17,7 +18,8 @@ void main() {
 	m1.speed = 15;
 	set_motors_speed(&m0, &m1);
 
-    register_proximity_callback(3, 1200, stop_uoli);
+	function = &stop_uoli;
+    register_proximity_callback(3, 1200, function);
 
 	// *****************************************************************
 	// MODO BUSCAR-PAREDE
@@ -112,8 +114,8 @@ void stop_uoli (){
     m0.id = 0;
     m1.id = 1;
 
-    m0.speed = 0;
-    m1.speed = 0;
+    m0.speed = 20;
+    m1.speed = 20;
     set_motors_speed(&m0, &m1);
 
     return;
