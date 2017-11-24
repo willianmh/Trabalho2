@@ -425,6 +425,7 @@ remove_callback_end:
 	sub r1, r1, #1
 	push {r0-r3}
 	@ chama a funcao
+	msr CPSR_c, #0x10
 	blx r7
 	pop {r0-r3}
 	mov r7, #23
