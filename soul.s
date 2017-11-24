@@ -134,7 +134,7 @@ SET_TZIC:
 
 @ ****************************************************************************
 SOFTWARE_INT_HANDLER:
-	push {r1-r6, r8} @ (?) precisa dar push em r1-r3
+	push {r1-r6, r8, lr} @ (?) precisa dar push em r1-r3
 	cmp r7, #16
 	beq svc_read_sonar @ ok
 	cmp r7, #17
@@ -322,7 +322,7 @@ svc_set_alarm:
 	b SOFTWARE_INT_HANDLER_END
 
 svc_supervisor:
-	msr CPSR_c, #0x10
+	msr CPSR_c, #0x12
 	b SOFTWARE_INT_HANDLER_END
 
 svc_read_sonar_error:
@@ -342,13 +342,14 @@ svc_time_invalid:
 
 
 SOFTWARE_INT_HANDLER_END:
-	pop {r1-r6, r8}
+	pop {r1-r6, r8, lr}
 	movs pc, lr
 
 SOFTWARE_INT_HANDLER_ERROR:
 
 @ ****************************************************************************
 IRQ_HANDLER:
+	pop {r0-r7, lr}
 
 	ldr r0, =GPT_SR
 	mov r1, #0x1
@@ -423,13 +424,14 @@ remove_callback:
 	b remove_callback
 remove_callback_end:
 	sub r1, r1, #1
+
 	push {r0-r3}
-	@ chama a funcao
 	msr CPSR_c, #0x10
 	blx r7
-	pop {r0-r3}
 	mov r7, #23
 	svc 0x0
+	pop {r0-r3}
+
 next_callback:
 	add r1, r1, #1                    @ i++
 	b verify_callbacks
@@ -488,10 +490,12 @@ remove_alarm_end:
 	sub r1, r1, #1				@ ajusta
 
 	push {r0-r3}
+
 	blx r7
-	pop {r0-r3}
 	mov r7, #23
 	svc 0x0
+	pop {r0-r3}
+
 
 next_alarm:
 	add r1, r1, #1
@@ -499,6 +503,7 @@ next_alarm:
 verify_alarm_end:
 
 
+	pop {r0-r7, lr}
 	sub lr, lr, #4
 	movs pc, lr
 
