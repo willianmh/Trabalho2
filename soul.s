@@ -324,7 +324,7 @@ svc_set_alarm:
 svc_supervisor:
 	pop {r1-r6, r8, lr}
 	msr CPSR_c, #0x12
-	movs pc, lr
+	b volta_irq
 
 svc_read_sonar_error:
 too_many_callbacks:
@@ -431,6 +431,7 @@ remove_callback_end:
 	blx r7
 	mov r7, #23
 	svc 0x0
+volta_irq:
 	pop {r0-r3}
 
 next_callback:
