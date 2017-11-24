@@ -1,5 +1,7 @@
 #include "api_robot2.h"
 
+void stop_uoli();
+
 void main() {
 	unsigned char i;
 	int ajusta;
@@ -14,7 +16,9 @@ void main() {
 	m0.speed = 15;
 	m1.speed = 15;
 	set_motors_speed(&m0, &m1);
-	
+
+    register_proximity_callback(3, 1200, stop_uoli);
+
 	// *****************************************************************
 	// MODO BUSCAR-PAREDE
 	// *****************************************************************
@@ -113,7 +117,9 @@ void main() {
 	while (1);
 }
 
-
+void stop_uoli {
+        
+};
 
 
 

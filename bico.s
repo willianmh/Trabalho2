@@ -42,8 +42,18 @@ read_sonar:
 read_sonars:
 	@ r0 - inicio
 	@ r1 - fim
-	@ r2 - distance
+	@ r2 - distances vector
 
+	mov r3, #0
+	push {r4-r8, lr}
+read_one:
+	push {r0-r3}
+	bl read_sonar			@ le o sonar em r0
+	mov r4, r0				@ retorno da leitura em r7
+	pop {r0-r3}
+
+	pop {r4-r8, lr}
+	mov pc, lr
 register_proximity_callback:
 	@ r0 - sensor Id
 	@ r1 - distances
