@@ -349,7 +349,7 @@ SOFTWARE_INT_HANDLER_ERROR:
 
 @ ****************************************************************************
 IRQ_HANDLER:
-	pop {r0-r7, lr}
+	push {r0-r7, lr}
 
 	ldr r0, =GPT_SR
 	mov r1, #0x1
