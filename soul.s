@@ -147,6 +147,8 @@ SOFTWARE_INT_HANDLER:
 	beq svc_set_time
 	cmp r7, #22
 	beq svc_set_alarm
+	cmp r7, #23
+	beq svc_supervisor
 	@ valor invalido de r7
 	b SOFTWARE_INT_HANDLER_ERROR
 
@@ -317,6 +319,10 @@ svc_set_alarm:
 	mov r0, #0
 	b SOFTWARE_INT_HANDLER_END
 
+svc_supervisor:
+	msr CPSR_c, #0x10
+	b SOFTWARE_INT_HANDLER_END
+
 svc_read_sonar_error:
 too_many_callbacks:
 svc_set_motor_speed_id_invalid:
@@ -415,10 +421,12 @@ remove_callback:
 	b remove_callback
 remove_callback_end:
 	sub r1, r1, #1
-
+	push {r0-r3}
 	@ chama a funcao
 	blx r7
-
+	pop {r0-r3}
+	mov r7, #23
+	svc 0x0
 next_callback:
 	add r1, r1, #1                    @ i++
 	b verify_callbacks
@@ -476,7 +484,12 @@ remove_alarm:
 remove_alarm_end:
 	sub r1, r1, #1				@ ajusta
 
+	push {r0-r3}
 	blx r7
+	pop {r0-r3}
+	mov r7, #23
+	svc 0x0
+
 next_alarm:
 	add r1, r1, #1
 	b verify_alarm

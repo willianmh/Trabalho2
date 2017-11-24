@@ -10,7 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc737193-f86a-4c17-91c8-b9445e717ab2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/segue-parede.c" afterPath="$PROJECT_DIR$/segue-parede.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,7 +27,7 @@
           <file leaf-file-name="segue-parede.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/segue-parede.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="122">
+                <state relative-caret-position="405">
                   <caret line="27" column="14" lean-forward="false" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
                   <folding />
                 </state>
@@ -127,12 +127,12 @@
       <option name="presentableId" value="Default" />
       <updated>1511371792762</updated>
       <workItem from="1511371794115" duration="2297000" />
-      <workItem from="1511488867872" duration="1952000" />
+      <workItem from="1511488867872" duration="2725000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4249000" />
+    <option name="totallyTimeSpent" value="5022000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
@@ -181,7 +181,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/segue-parede.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
+        <state relative-caret-position="405">
           <caret line="27" column="14" lean-forward="false" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
           <folding />
         </state>
