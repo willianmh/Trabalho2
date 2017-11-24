@@ -44,21 +44,39 @@ read_sonars:
 	@ r1 - fim
 	@ r2 - distances vector
 
-	mov r3, #0
 	push {r4-r8, lr}
+	
+	
+	
+	mov r3, #0				@ variavel auxiliar p/ vetor
 read_one:
+	cmp r0, r1				@ le ate o ultimo sonar
+	bhi read_end
+	
+	@ ********************* @ chama read_sonar
 	push {r0-r3}
 	bl read_sonar			@ le o sonar em r0
-	mov r4, r0				@ retorno da leitura em r7
+	mov r5, r0				@ retorno da leitura em r5
 	pop {r0-r3}
 
+	str r5, [r2, r3]		@ guarda o valor
+	add r3, r3, #1
+	add r1, r1, #1
+	
+	b read_one
+read_end:
 	pop {r4-r8, lr}
 	mov pc, lr
 register_proximity_callback:
 	@ r0 - sensor Id
 	@ r1 - distances
 	@ r2 - pointer
-
+	
+	push {r7, lr}
+	mov r7, #17
+	svc 0x0
+	pop {r7, lr}
+	mov pc, lr
 add_alarm:
 	@ r0 - pointer
 	@ r1 - Timer
