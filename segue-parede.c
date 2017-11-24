@@ -12,12 +12,6 @@ void _start() {
 	unsigned short sonar_14;
 	unsigned int x, y;
 	motor_cfg_t m0, m1;
-	
-	
-	while(1) {
-		x = read_sonar(1);
-		y = read_sonar(14);
-	}
 
 	// *****************************************************************
 	// MODO BUSCAR-PAREDE
@@ -77,7 +71,50 @@ void _start() {
         distance_aux = read_sonar(15);
         distance_aux = read_sonar(15);
 
-		
+
+        if ( (sonar_1 < sonar_14 + 450 && sonar_1 > sonar_14 - 450) && (distance < 900 || distance_aux < 900)) {
+            // reto
+            m0.speed = 4;
+            m1.speed = 4;
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            ajusta = 0;
+        } else if((distance < distance_aux - 10) || (sonar_1 < sonar_14 - 400 && sonar_14 < 1700)) {
+
+            // direita
+            m0.speed = 1;
+            m1.speed = 4;
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+
+            ajusta = 1;
+        } else if((distance > distance_aux + 10) || (sonar_1 > sonar_14 + 400 && sonar_1 < 1700)) {
+            // esquerda
+            m0.speed = 4;
+            m1.speed = 1;
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+            set_motors_speed(&m0, &m1);
+
+            ajusta = 1;
+        } else {
+            if (ajusta == 1) {
+                m0.speed = 7;
+                m1.speed = 7;
+                set_motors_speed(&m0, &m1);
+                set_motors_speed(&m0, &m1);
+                set_motors_speed(&m0, &m1);
+                set_motors_speed(&m0, &m1);
+                ajusta = 0;
+            }
+        }
+
+
 		
 
         //if ((sonar_1 > sonar_14 + 50 && sonar_1 < 1500 && sonar_14 < 1500) || (distance > distance_aux + 10 ) || (sonar_1 > 2100 && distance > 1000)) {			
@@ -116,33 +153,33 @@ void _start() {
 			//}
 		//}
 
-		if (distance > distance_aux + 5 || distance > 950) {
-			// gira para esquerda
-			m0.speed = 4;
-			m1.speed = 1;
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			ajusta = 1;
-		} else if (distance < distance_aux - 5 || distance < 300) {
-			// gira para direita
-			m0.speed = 1;
-			m1.speed = 4;
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			ajusta = 1;
-		} else if (ajusta == 1) {
-			m0.speed = 6;
-			m1.speed = 6;
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			set_motors_speed(&m0, &m1);
-			ajusta = 0;
-		}
+//		if (distance > distance_aux + 5 || distance > 950) {
+//			// gira para esquerda
+//			m0.speed = 4;
+//			m1.speed = 1;
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			ajusta = 1;
+//		} else if (distance < distance_aux - 5 || distance < 300) {
+//			// gira para direita
+//			m0.speed = 1;
+//			m1.speed = 4;
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			ajusta = 1;
+//		} else if (ajusta == 1) {
+//			m0.speed = 6;
+//			m1.speed = 6;
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			set_motors_speed(&m0, &m1);
+//			ajusta = 0;
+//		}
 
 	}
 
