@@ -71,9 +71,11 @@ RESET_HANDLER:
 	@ zera o numero de callbacks ativas
 	ldr r0, =ACTIVED_CALLBACKS
 	mov r1, #0
-	strb r1, [r0]
+	str r1, [r0]
 
-
+	ldr r0, =ACTIVED_ALARMS
+	mov r1, #0
+	str r1, [r0]
 	@ Ajustar a pilha do modo IRQ.
 	@ Você deve iniciar a pilha do modo IRQ aqui. Veja abaixo como usar a instrução MSR para chavear de modo.
 	@ ...
