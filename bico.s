@@ -42,9 +42,6 @@ read_sonars:
 	@ r2 - distances vector
 
 	push {r4-r8, lr}
-
-
-
 	mov r3, #0				@ variavel auxiliar p/ vetor
 read_one:
 	cmp r0, r1				@ le ate o ultimo sonar

@@ -19,8 +19,8 @@ void _start() {
   m1.id = 1;
 
   sys_time = 1;
-  register_proximity_callback(3, 850, turn_right_3);
-  register_proximity_callback(4, 850, turn_right_4);
+  register_proximity_callback(3, 900, turn_right_3);
+  register_proximity_callback(4, 900, turn_right_4);
 
   go_ahead();
 
@@ -48,12 +48,12 @@ void turn_right_3() {
       break;
   }
 
-  m0.speed = 12;
-  m1.speed = 12;
+  m0.speed = 10;
+  m1.speed = 10;
   set_motors_speed(&m0, &m1);
 	set_motors_speed(&m0, &m1);
 
-  register_proximity_callback(3, 850, turn_right_3);
+  register_proximity_callback(3, 900, turn_right_3);
   return;
 }
 
@@ -75,13 +75,13 @@ void turn_right_4() {
       break;
   }
 
-  m0.speed = 12;
-  m1.speed = 12;
+  m0.speed = 10;
+  m1.speed = 10;
   set_motors_speed(&m0, &m1);
 	set_motors_speed(&m0, &m1);
 
 
-  register_proximity_callback(3, 850, turn_right_4);
+  register_proximity_callback(3, 900, turn_right_4);
 
   return;
 }
@@ -106,8 +106,8 @@ void turn_90() {
 }
 
 void go_ahead() {
-  m0.speed = 12;
-  m1.speed = 12;
+  m0.speed = 10;
+  m1.speed = 10;
 
   set_motors_speed(&m0, &m1);
   set_motors_speed(&m0, &m1);
