@@ -56,7 +56,9 @@ read_one:
 	mov r5, r0				@ retorno da leitura em r5
 	pop {r0-r3}
 
-	str r5, [r2, r3]		@ guarda o valor
+	mov r4, #4
+	mul r4, r3, r4
+	str r5, [r2, r4]		@ guarda o valor
 	add r3, r3, #1
 	add r1, r1, #1
 
@@ -83,13 +85,13 @@ add_alarm:
 	pop {r7, pc}
 
 get_time:
-	@ r0 - where to recieve
-	@ r0 - pointer
-	@ r1 - Timer
-	push {r7, lr}
+	@ r0 - where to receive
+	push {r4, r7, lr}
+	mov r4, r0
 	mov r7, #20
 	svc 0x0
-	pop {r7, pc}
+	str r0, [r4]
+	pop {r4, r7, pc}
 
 set_time:
 	@ r0 - Time

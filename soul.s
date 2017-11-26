@@ -33,7 +33,7 @@ interrupt_vector:
 
 RESET_HANDLER:
 	@ Zera o Tempo do sistema
-	ldr r2, =CONTADOR  @lembre-se de declarar esse contador em uma secao de dados!
+	ldr r2, =SYSTEM_TIME  @lembre-se de declarar esse contador em uma secao de dados!
 	mov r0, #0
 	str r0, [r2]
 
@@ -45,7 +45,7 @@ RESET_HANDLER:
 	mov r1, #0x00000041
 	str r1, [r0]
 
-	ldr r0, =GPT_SR
+	ldr r0, =GPT_PR
 	mov r1, #0x00000000
 	str r1, [r0]
 
@@ -62,11 +62,6 @@ RESET_HANDLER:
 	ldr r0, =GDIR
 	ldr r1, =0xfffc003e
 	str r1, [r0]
-
-	@ zera o vetor de callbacks
-	@ldr r0, =CALLBACK_VECTOR
-	@mov r1, #0
-	@strb r1, [r0]
 
 	@ zera o numero de callbacks ativas
 	ldr r0, =ACTIVED_CALLBACKS
@@ -134,7 +129,7 @@ SET_TZIC:
 
 @ ****************************************************************************
 SOFTWARE_INT_HANDLER:
-	push {r1-r6, r8, lr} @ (?) precisa dar push em r1-r3
+	push {r4-r6, r8, lr} @ (?) precisa dar push em r1-r3
 	cmp r7, #16
 	beq svc_read_sonar @ ok
 	cmp r7, #17
@@ -150,7 +145,9 @@ SOFTWARE_INT_HANDLER:
 	cmp r7, #22
 	beq svc_set_alarm
 	cmp r7, #23
-	beq svc_supervisor
+	beq svc_irq_mode_callback
+	cmp r7, #24
+	beq svc_irq_mode_alarm
 	@ valor invalido de r7
 	b SOFTWARE_INT_HANDLER_ERROR
 
@@ -291,12 +288,12 @@ svc_set_motors_speed:
 	b SOFTWARE_INT_HANDLER_END
 
 svc_get_time:
-	ldr r0, =CONTADOR
+	ldr r0, =SYSTEM_TIME
 	ldr r0, [r0]
 	b SOFTWARE_INT_HANDLER_END
 
 svc_set_time:
-	ldr r1, =CONTADOR
+	ldr r1, =SYSTEM_TIME
 	str r0, [r1]
 	b SOFTWARE_INT_HANDLER_END
 
@@ -309,7 +306,7 @@ svc_set_alarm:
 	cmp r5, #MAX_ALARMS
 	bhs svc_too_many_alarms
 
-	ldr r6, =CONTADOR
+	ldr r6, =SYSTEM_TIME
 	ldr r6, [r6]
 	cmp r1, r6
 	bls svc_time_invalid
@@ -327,10 +324,15 @@ svc_set_alarm:
 	mov r0, #0
 	b SOFTWARE_INT_HANDLER_END
 
-svc_supervisor:
-	pop {r1-r6, r8, lr}
+svc_irq_mode_callback:
+	pop {r4-r6, r8, lr}
 	msr CPSR_c, #0x12
-	b volta_irq
+	b irq_callback
+
+svc_irq_mode_alarm:
+	pop {r4-r6, r8, lr}
+	msr CPSR_c, #0x12
+	b irq_alarm
 
 svc_read_sonar_error:
 too_many_callbacks:
@@ -349,7 +351,7 @@ svc_time_invalid:
 
 
 SOFTWARE_INT_HANDLER_END:
-	pop {r1-r6, r8, lr}
+	pop {r4-r6, r8, lr}
 	movs pc, lr
 
 SOFTWARE_INT_HANDLER_ERROR:
@@ -362,10 +364,9 @@ IRQ_HANDLER:
 	mov r1, #0x1
 	str r1, [r0]
 
-	ldr r0, =CONTADOR
+	ldr r0, =SYSTEM_TIME
 	ldr r1, [r0]
-	mov r2, #1
-	add r1, r1, r2
+	add r1, r1, #1
 	str r1, [r0]
 
 	ldr r0, =ACTIVED_CALLBACKS
@@ -382,6 +383,7 @@ verify_callbacks:
 
 	mov r6, #4
 	mul r6, r1, r6
+
 	ldr r5, =CALLBACK_SONAR_BASE
 
 	@ *************************** @ chamada de sistema para leitura de sonar
@@ -449,7 +451,7 @@ remove_callback_end:
 	blx r7
 	mov r7, #23
 	svc 0x0
-volta_irq:
+irq_callback:
 	pop {r0-r3}
 
 next_callback:
@@ -473,15 +475,12 @@ verify_alarm:
 
 	ldr r5, =ALARM_TIME_BASE
 	@ *************************** @ chamada de sistema para leitura system time
-	push {r0-r3}
-	mov r7, #20
-	svc #0
-	mov r7, r0
-	pop {r0-r3}
+	ldr r7, =SYSTEM_TIME
+	ldr r7, [r7]
 	@ *************************** @ fim da chamada de sistema para leitura system time
 
 	ldr r2, [r5, r6]			@ carrega o tempo do alarme
-	cmp r7, r2
+	cmp r2, r7
 	bhi next_alarm
 
 	ldr r5, =ALARM_FUNCTION_BASE
@@ -524,8 +523,9 @@ remove_alarm_end:
 	push {r0-r3}
 	msr CPSR_c, #0x10
 	blx r7
-	mov r7, #23
+	mov r7, #24
 	svc 0x0
+irq_alarm:
 	pop {r0-r3}
 
 
@@ -542,8 +542,7 @@ verify_alarm_end:
 
 
 .data
-
-	CONTADOR: .skip 32
+	SYSTEM_TIME: .skip 4
 
 	ACTIVED_CALLBACKS:    .skip 4
 	ACTIVED_ALARMS:		  .skip 4

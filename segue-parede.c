@@ -30,18 +30,22 @@ void _start() {
 	register_proximity_callback(4, 900, stop_uoli);
 
 	while (1) {
-		if(parou == 1){
-			m1.speed = 2;
+		if (parou == 1)
+		break;
+	}
+	m1.speed = 2;
+	set_motor_speed(&m1);
+	set_motor_speed(&m1);
+	set_motor_speed(&m1);
+
+	while (1) {
+		sonar_0 = read_sonar(0);
+		sonar_15 = read_sonar(15);
+		if (sonar_0 < 1000 && sonar_15 < 1000 && sonar_0 < sonar_15 + 200 && sonar_0 > sonar_15 - 200) {
+			m1.speed = 0;
 			set_motor_speed(&m1);
 			set_motor_speed(&m1);
-			sonar_0 = read_sonar(0);
-			sonar_15 = read_sonar(15);
-			if (sonar_0 < 1000 && sonar_15 < 1000 && sonar_0 < sonar_15 + 95 && sonar_0 > sonar_15 - 95) {
-				m1.speed = 0;
-				set_motor_speed(&m1);
-				set_motor_speed(&m1);
-				break;
-			}
+			break;
 		}
 	}
 
@@ -70,42 +74,41 @@ void _start() {
 			set_motors_speed(&m0, &m1);
 			set_motors_speed(&m0, &m1);
 
-		} else {
-			if (sonar_1 < 900) {
-				m0.speed = 3;
-				m1.speed = 7;
+		} else if (sonar_1 < 900) {
+			m0.speed = 3;
+			m1.speed = 7;
+			set_motors_speed(&m0, &m1);
+			set_motors_speed(&m0, &m1);
+			set_motors_speed(&m0, &m1);
+		} else if (sonar_1 > 1700) {
+			sonar_0 = read_sonar(0);
+			if (sonar_0 < 1000) {
+				m0.speed = 7;
+				m1.speed = 5;
 				set_motors_speed(&m0, &m1);
 				set_motors_speed(&m0, &m1);
 				set_motors_speed(&m0, &m1);
-			} else if (sonar_1 > 1700) {
-				sonar_0 = read_sonar(0);
-				if (sonar_0 < 1100) {
-					m0.speed = 7;
-					m1.speed = 5;
-					set_motors_speed(&m0, &m1);
-					set_motors_speed(&m0, &m1);
-					set_motors_speed(&m0, &m1);
-				} else {
-					m0.speed = 7;
-					m1.speed = 3;
-					set_motors_speed(&m0, &m1);
-					set_motors_speed(&m0, &m1);
-					set_motors_speed(&m0, &m1);
-				}
-			} else if (sonar_1 > 1170) {
+			} else {
 				m0.speed = 7;
 				m1.speed = 3;
 				set_motors_speed(&m0, &m1);
 				set_motors_speed(&m0, &m1);
 				set_motors_speed(&m0, &m1);
-			} else {
-				m0.speed = 8;
-				m1.speed = 8;
-				set_motors_speed(&m0, &m1);
-				set_motors_speed(&m0, &m1);
-				set_motors_speed(&m0, &m1);
 			}
+		} else if (sonar_1 > 1170) {
+			m0.speed = 7;
+			m1.speed = 3;
+			set_motors_speed(&m0, &m1);
+			set_motors_speed(&m0, &m1);
+			set_motors_speed(&m0, &m1);
+		} else {
+			m0.speed = 8;
+			m1.speed = 8;
+			set_motors_speed(&m0, &m1);
+			set_motors_speed(&m0, &m1);
+			set_motors_speed(&m0, &m1);
 		}
+
 	}
 
 	while (1);
