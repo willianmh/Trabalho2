@@ -14,8 +14,7 @@ set_motor_speed:
 	ldrb r0, [r0]
 	mov r7, #18
 	svc 0x0
-	pop {r7, lr}
-	mov pc, lr
+	pop {r7, pc}
 
 
 set_motors_speed:
@@ -26,8 +25,7 @@ set_motors_speed:
 	ldrb r1, [r1, #1]
 	mov r7, #19
 	svc 0x0
-	pop {r7, lr}
-	mov pc, lr
+	pop {r7, pc}
 
 
 read_sonar:
@@ -35,8 +33,7 @@ read_sonar:
 	push {r7, lr}
 	mov r7, #16
 	svc 0x0
-	pop {r7, lr}
-	mov pc, lr
+	pop {r7, pc}
 
 
 read_sonars:
@@ -45,14 +42,14 @@ read_sonars:
 	@ r2 - distances vector
 
 	push {r4-r8, lr}
-	
-	
-	
+
+
+
 	mov r3, #0				@ variavel auxiliar p/ vetor
 read_one:
 	cmp r0, r1				@ le ate o ultimo sonar
 	bhi read_end
-	
+
 	@ ********************* @ chama read_sonar
 	push {r0-r3}
 	bl read_sonar			@ le o sonar em r0
@@ -62,27 +59,41 @@ read_one:
 	str r5, [r2, r3]		@ guarda o valor
 	add r3, r3, #1
 	add r1, r1, #1
-	
+
 	b read_one
 read_end:
-	pop {r4-r8, lr}
-	mov pc, lr
+	pop {r4-r8, pc}
+
 register_proximity_callback:
 	@ r0 - sensor Id
 	@ r1 - distances
 	@ r2 - pointer
-	
-	push {r7, lr}
+
+	push {r4-r8, lr}
 	mov r7, #17
 	svc 0x0
-	pop {r7, lr}
-	mov pc, lr
+	pop {r4-r8, pc}
+
 add_alarm:
 	@ r0 - pointer
 	@ r1 - Timer
+	push {r7, lr}
+	mov r7, #22
+	svc 0x0
+	pop {r7, pc}
 
 get_time:
 	@ r0 - where to recieve
+	@ r0 - pointer
+	@ r1 - Timer
+	push {r7, lr}
+	mov r7, #20
+	svc 0x0
+	pop {r7, pc}
 
 set_time:
 	@ r0 - Time
+	push {r7, lr}
+	mov r7, #21
+	svc 0x0
+	pop {r7, pc}

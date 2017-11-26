@@ -220,11 +220,15 @@ svc_register_proximity_callback:
 	bhi svc_register_proximity_callback_id_invalid
 
 	ldr r3, =CALLBACK_SONAR_BASE
-	str r0, [r3, r5]
+	@
+	mov r6, #4
+	mul r6, r5, r6
+
+	str r0, [r3, r6]
 	ldr r3, =CALLBACK_THRESHOLD_BASE
-	str r1, [r3, r5]
+	str r1, [r3, r6]
 	ldr r3, =CALLBACK_FUNCTION_BASE
-	str r2, [r3, r5]
+	str r2, [r3, r6]
 
 	add r5, r5, #1
 	str r5, [r4]
@@ -309,11 +313,13 @@ svc_set_alarm:
 	ldr r6, [r6]
 	cmp r1, r6
 	bls svc_time_invalid
+	mov r7, #4
+	mul r7, r5, r7
 
 	ldr r3, =ALARM_FUNCTION_BASE
-	str r0, [r3, r5]
+	str r0, [r3, r7]
 	ldr r3, =ALARM_TIME_BASE
-	str r1, [r3, r5]
+	str r1, [r3, r7]
 
 	add r5, r5, #1
 	str r5, [r4]
@@ -374,11 +380,13 @@ verify_callbacks:
 	cmp r1, r8                        @ i < callbacks_actived
 	beq verify_callbacks_end
 
+	mov r6, #4
+	mul r6, r1, r6
 	ldr r5, =CALLBACK_SONAR_BASE
 
 	@ *************************** @ chamada de sistema para leitura de sonar
 	push {r0-r3}
-	ldr r0, [r5, r1]              @ carrega o Id do sonar
+	ldr r0, [r5, r6]              @ carrega o Id do sonar
 	mov r7, #16                   @ escolhe a syscall read_sonar
 	svc #0
 	mov r7, r0                    @ retorno da funcao em R7
@@ -386,12 +394,12 @@ verify_callbacks:
 	@ *************************** @ fim chamada de sistema para leitura de sonar
 
 	ldr r5, =CALLBACK_THRESHOLD_BASE
-	ldr r2, [r5, r1]              @ carrega o limiar
+	ldr r2, [r5, r6]              @ carrega o limiar
 	cmp r7, r2                    @ if (distancia < limiar)
 	bhs next_callback
 
 	ldr r5, =CALLBACK_FUNCTION_BASE
-	ldr r7, [r5, r1]                @ r7 <- function a ser chamada
+	ldr r7, [r5, r6]                @ r7 <- function a ser chamada
 
 	@ ***************************   @ apagar a callback
 	@ decrementa callbacks ativas
@@ -405,26 +413,36 @@ remove_callback:
 
 	ldr r4, =CALLBACK_SONAR_BASE
 	add r2, r2, #1
+	mov r6, #4
+	mul r6, r2, r6
 	ldr r3, [r4, r2]              @ carrega sonar[i+1]
 	sub r2, r2, #1
 	str r3, [r4, r2]              @ salva em sonar[i]
 
 	ldr r4, =CALLBACK_THRESHOLD_BASE
 	add r2, r2, #1
+	mov r6, #4
+	mul r6, r2, r6
 	ldr r3, [r4, r2]              @ carrega threshold[i+1]
 	sub r2, r2, #1
+	mov r6, #4
+	mul r6, r2, r6
 	str r3, [r4, r2]              @ salva em threshold[i]
 
 	ldr r4, =CALLBACK_FUNCTION_BASE
 	add r2, r2, #1
+	mov r6, #4
+	mul r6, r2, r6
 	ldr r3, [r4, r2]              @ carrega threshold[i+1]
 	sub r2, r2, #1
+	mov r6, #4
+	mul r6, r2, r6
 	str r3, [r4, r2]              @ salva em threshold[i]
 
 	add r2, r2, #1                @ j++
 	b remove_callback
 remove_callback_end:
-	sub r1, r1, #1
+	mov r1, #0
 
 	push {r0-r3}
 	msr CPSR_c, #0x10
@@ -450,6 +468,9 @@ verify_alarm:
 	cmp r1, r8
 	beq verify_alarm_end
 
+	mov r6, #4
+	mul r6, r1, r6
+
 	ldr r5, =ALARM_TIME_BASE
 	@ *************************** @ chamada de sistema para leitura system time
 	push {r0-r3}
@@ -459,12 +480,12 @@ verify_alarm:
 	pop {r0-r3}
 	@ *************************** @ fim da chamada de sistema para leitura system time
 
-	ldr r2, [r5, r1]			@ carrega o tempo do alarme
+	ldr r2, [r5, r6]			@ carrega o tempo do alarme
 	cmp r7, r2
 	bhi next_alarm
 
 	ldr r5, =ALARM_FUNCTION_BASE
-	ldr r7, [r5, r1]			@ carrega a funcao a ser chamada
+	ldr r7, [r5, r6]			@ carrega a funcao a ser chamada
 
 	sub r8, r8, #1				@ decrementa o num de alarmes
 	str r8, [r0]
@@ -474,22 +495,31 @@ remove_alarm:
 	cmp r2, r8
 	beq remove_alarm_end
 
+
 	ldr r4, =ALARM_TIME_BASE
 	add r2, r2, #1
-	ldr r3, [r4, r2]
+	mov r6, #4
+	mul r6, r2, r6
+	ldr r3, [r4, r6]
 	sub r2, r2, #1
-	str r3, [r4, r2]
+	mov r6, #4
+	mul r6, r2, r6
+	str r3, [r4, r6]
 
 	ldr r4, =ALARM_FUNCTION_BASE
 	add r2, r2, #1
-	ldr r3, [r4, r2]
+	mov r6, #4
+	mul r6, r2, r6
+	ldr r3, [r4, r6]
 	sub r2, r2, #1
-	str r3, [r4, r2]
+	mov r6, #4
+	mul r6, r2, r6
+	str r3, [r4, r6]
 
 	add r2, r2, #1
 	b remove_alarm
 remove_alarm_end:
-	sub r1, r1, #1				@ ajusta
+	mov r1, #0				@ ajusta
 
 	push {r0-r3}
 	msr CPSR_c, #0x10
