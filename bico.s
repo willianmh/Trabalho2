@@ -8,21 +8,21 @@
 .global set_time
 
 set_motor_speed:
-	@ r0 - enderco de uma Struct
+	@ r0 - endereco de uma Struct
 	push {r7, lr}
-	ldrb r1, [r0, #1]
-	ldrb r0, [r0]
+	ldrb r1, [r0, #1] @ carrega em r1 <- velocidade
+	ldrb r0, [r0]	  @ carrega em r0 <- Id sonar
 	mov r7, #18
 	svc 0x0
 	pop {r7, pc}
 
 
 set_motors_speed:
-	@ r0 - enderco de uma Struct
-	@ r1 - enderco de uma Struct
+	@ r0 - endereco de uma Struct
+	@ r1 - endereco de uma Struct
 	push {r7, lr}
-	ldrb r0, [r0, #1]
-	ldrb r1, [r1, #1]
+	ldrb r0, [r0, #1] @ carrega em r0 <- velocidade motor 0
+	ldrb r1, [r1, #1] @ carrega em r1 <- velocidade motor 1
 	mov r7, #19
 	svc 0x0
 	pop {r7, pc}
@@ -43,7 +43,7 @@ read_sonars:
 
 	push {r4-r8, lr}
 	mov r3, #0				@ variavel auxiliar p/ vetor
-read_one:
+	read_one:
 	cmp r0, r1				@ le ate o ultimo sonar
 	bhi read_end
 
@@ -84,7 +84,7 @@ add_alarm:
 get_time:
 	@ r0 - where to receive
 	push {r4, r7, lr}
-	mov r4, r0
+	mov r4, r0		@ guarda o endereco
 	mov r7, #20
 	svc 0x0
 	str r0, [r4]
